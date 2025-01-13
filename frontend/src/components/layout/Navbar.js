@@ -1,95 +1,61 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
-  const isActiveLink = (path) => {
-    return location.pathname === path ? "border-b-2" : "";
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
-  const navLinks = [
-    { path: "/dashboard", name: "Dashboard", icon: "📊" },
-    { path: "/workout", name: "Workouts", icon: "💪" },
-    { path: "/nutrition", name: "Nutrition", icon: "🥗" },
-    { path: "/profile", name: "Profile", icon: "👤" }
-  ];
-
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg">
+    <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link 
-              to="/" 
-              className="flex items-center text-white text-xl font-bold hover:scale-105 transition-transform duration-200"
-            >
-              <span className="text-2xl mr-2">🏃</span>
-              FitTrack
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <Link to="/" className="flex-shrink-0 flex items-center">
+              <span className="text-xl font-bold text-indigo-600">FitTrack</span>
             </Link>
+            {token && (
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <Link to="/dashboard" className="nav-link">Dashboard</Link>
+                <Link to="/workout" className="nav-link">Workouts</Link>
+                <Link to="/nutrition" className="nav-link">Nutrition</Link>
+                <Link to="/profile" className="nav-link">Profile</Link>
+              </div>
+            )}
           </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-8">
-              {navLinks.map((link) => (
+          <div className="flex items-center">
+            {token ? (
+              <button
+                onClick={handleLogout}
+                className="ml-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Logout
+              </button>
+            ) : (
+              <div className="space-x-4">
                 <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium
-                    transition-all duration-200 hover:bg-blue-700/50 
-                    ${isActiveLink(link.path)} flex items-center space-x-1`}
+                  to="/login"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-700"
                 >
-                  <span>{link.icon}</span>
-                  <span>{link.name}</span>
+                  Login
                 </Link>
-              ))}
-            </div>
+                <Link
+                  to="/signup"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  Sign up
+                </Link>
+              </div>
+            )}
           </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-blue-200 hover:bg-blue-700 focus:outline-none"
-            >
-              <span className="sr-only">Open main menu</span>
-              {!isOpen ? (
-                <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              ) : (
-                <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden transition-all duration-300 ease-in-out`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-blue-800/90 backdrop-blur-sm">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`text-white hover:text-blue-200 block px-3 py-2 rounded-md text-base font-medium
-                hover:bg-blue-700/50 transition-all duration-200 ${isActiveLink(link.path)} 
-                flex items-center space-x-2`}
-              onClick={() => setIsOpen(false)}
-            >
-              <span className="text-xl">{link.icon}</span>
-              <span>{link.name}</span>
-            </Link>
-          ))}
         </div>
       </div>
     </nav>
   );
 };
 
-export default Navbar; 
+export default Navbar;
