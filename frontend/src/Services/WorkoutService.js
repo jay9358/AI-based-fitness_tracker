@@ -1,6 +1,11 @@
 import api from './api';
 
 export const WorkoutService = {
+  getTodaysWorkouts : async () => {
+    const response = await api.get('/workouts/today');
+    return response.data;
+  },
+  
   getWorkouts: async () => {
     const response = await api.get('/workouts');
     return response.data;
@@ -42,4 +47,5 @@ export const WorkoutService = {
     const response = await api.post('/ai-plan/weight-goal', { weight });
     return response.data;
   }
+  
 };
